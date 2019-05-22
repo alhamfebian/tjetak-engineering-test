@@ -21,10 +21,8 @@ const App = () => {
       <CenterWrapper currentFocus={currentFocus}>
         <div className="selectSpec">
           <MainPage setCurrentFocus={setCurrentFocus} />
-          {console.log(currentFocus)}
         </div>
         <div className="displayPrice">
-          <h1>Harga Cetak di Kota Jakarta Pusat </h1>
           <Tabel />
         </div>
       </CenterWrapper>
@@ -32,12 +30,16 @@ const App = () => {
         <Footer />
       </FooterWrapper>
     </PageWrapper>
-  )
+  );
 }
 
 const PageWrapper = styled.div`
   width: 100%;
   padding: 15rem 0 0;
+
+  @media screen and (max-width: 40rem) {
+    padding: 7rem 0 0;
+  }
 `;
 
 const NavbarWrapper = styled.div`
@@ -59,30 +61,45 @@ const CenterWrapper = styled.div`
   align-items: flex-start;
   align-content: flex-start;
 
+  @media screen and (max-width: 40rem) {
+    flex-direction: column;
+  }
+
   .selectSpec {
-    flex: ${props => props.currentFocus === 'selectSpec' ? 2 : 1};
+    flex: ${props => props.currentFocus === 'selectSpec' ? 'none' : 1};
+    width: ${props => props.currentFocus === 'selectSpec' ? '100%' : 'auto'};
     opacity: ${props => props.currentFocus === 'selectSpec' ? 1 : 0.5};
     transition: 0.25s ease all;
     margin-right: 2rem;
+
+    @media screen and (max-width: 40rem) {
+      width: 100%;
+      flex: none;
+    }
   }
 
   .displayPrice {
-    flex: ${props => props.currentFocus === 'displayPrice' ? 2 : 1};
-    opacity: ${props => props.currentFocus === 'displayPrice' ? 1 : 0.5};
+    flex: ${props => props.currentFocus === 'displayPrice' ? 2 : 'none'};
+    flex-flow: wrap row;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-content: flex-start;
+    overflow: hidden;
+    display: ${props => props.currentFocus === 'displayPrice' ? 'flex' : 'none'};
+    opacity: ${props => props.currentFocus === 'displayPrice' ? 1 : 0};
     transition: 0.25s ease all;
-    visibility: ${props => props.currentFocus === 'displayPrice' ? 'visible' : 'hidden'};
 
-    h1 {
-      text-align : center;
+    @media screen and (max-width: 40rem) {
+      width: 100%;
+      flex: none;
     }
   }
 `;
 
 const FooterWrapper = styled.div`
   width: 100%;
-  z-index: 1000;
   margin-top: 5rem;
-  `;
+`;
 
 ReactDOM.render(<App />, document.querySelector('#root'));
 

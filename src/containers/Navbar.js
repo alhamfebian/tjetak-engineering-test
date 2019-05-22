@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -11,6 +11,7 @@ import Promotion from '../asset/promotion-items.png';
 import Businessessential from '../asset/business-essentials.png';
 import Book from '../asset/book.png';
 
+import Collapsible from '../components/Collapsible';
 
 const CATEGORIES = [
   {
@@ -232,22 +233,33 @@ const CATEGORIES = [
   },
 ];
 
-export default function Navbar(props) {
+export default function Navbar() {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [activeMobileCategory, setActiveMobileCategory] = useState(-1);
+
   return(
     <NavWrapper>
       <FirstTier>
         <div className="content">
           <a href="tel:+622180511695">
-            <i class="material-icons">phone</i>+6221 8051 1695 (Jakarta)
+            <i className="material-icons">phone</i>
+            <span className="desktop">+6221 8051 1695 (Jakarta)</span>
+            <span className="mobile">Jakarta</span>
           </a>
           <a href="tel:+623160001639">
-            <i class="material-icons">phone</i>+6231 6000 1639 (Surabaya)
+            <i className="material-icons">phone</i>
+            <span className="desktop">+6231 6000 1639 (Surabaya)</span>
+            <span className="mobile">Surabaya</span>
           </a>
           <a href="https://wa.me/6282123279508">
-            <i className="fab fa-whatsapp" />WA: +62 821 2327 9508
+            <i className="fab fa-whatsapp" />
+            <span className="desktop">WA: +62 821 2327 9508</span>
+            <span className="mobile">WhatsApp</span>
           </a>
           <a href="mailto:order@tjetak.com">
-            <i class="material-icons">email</i>order@tjetak.com
+            <i className="material-icons">email</i>
+            <span className="desktop">order@tjetak.com</span>
+            <span className="mobile">Email</span>
           </a>
         </div>
       </FirstTier>
@@ -258,12 +270,15 @@ export default function Navbar(props) {
           <i className="material-icons">search</i>
         </div>
         <div className="rightSide">
-          <a className="masuk" href="https://www.tjetak.com/login">Masuk</a>
-          <a className="daftar" href="https://www.tjetak.com/register">Daftar</a>
+          <a className="masuk desktop" href="https://www.tjetak.com/login">Masuk</a>
+          <a className="daftar desktop" href="https://www.tjetak.com/register">Daftar</a>
           <a className="cart" href="https://www.tjetak.com/cart">
             <span className="notification">0</span>
             <i className="material-icons">shopping_cart</i>
           </a>
+          <button className="mobile" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+            <i className={`material-icons${showMobileMenu ? ' close' : ''}`}>{showMobileMenu ? 'close' : 'menu'}</i>
+          </button>
         </div>
       </SecondTier>
       <ThirdTier>
@@ -273,7 +288,7 @@ export default function Navbar(props) {
             <div className="overlay">
               {CATEGORIES.map((category, catIdx) => (
                 <a className="overlayItem" href={category.link}>
-                <img src={category.image}/>
+                  <img src={category.image}/>
                   {category.name}
                   <div className="subOverlay">
                     <TriangleAccent index={catIdx} />
@@ -287,6 +302,31 @@ export default function Navbar(props) {
           <a className="link" href="https://www.tjetak.com/quotation/create"> Permintaan Barang Custom</a>
         </div>
       </ThirdTier>
+      <MobileMenu show={showMobileMenu}>
+        <div className="mobileMenuContent">
+          <div className="userAccess">
+            <a className="masuk" href="https://www.tjetak.com/login">Masuk</a>
+            <a className="daftar" href="https://www.tjetak.com/register">Daftar</a>
+          </div>
+          <div className="categories">
+            {CATEGORIES.map((category, catIdx) => (
+              <>
+                <button onClick={() => setActiveMobileCategory(activeMobileCategory === catIdx ? -1 : catIdx)}>
+                  <img src={category.image}/>
+                  <span>{category.name}</span>
+                  <i class={`material-icons${activeMobileCategory === catIdx ? ' active' : ''}`}>keyboard_arrow_down</i>
+                </button>
+                <Collapsible collapse={activeMobileCategory !== catIdx}>
+                  <div className="subcats">
+                    <a href={category.link}>{category.name}</a>
+                    {category.subCategories.map(subCat => <a href={subCat.link}>{subCat.name}</a>)}
+                  </div>
+                </Collapsible>
+              </>
+            ))}
+          </div>
+        </div>
+      </MobileMenu>
     </NavWrapper>
   );
 }
@@ -303,6 +343,11 @@ const NavWrapper = styled.nav`
 const FirstTier = styled.div`
   width: 100%;
   background: #1977D2;
+  position: relative;
+  z-index: 10;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 
   .content {
     width: 100%;
@@ -313,6 +358,14 @@ const FirstTier = styled.div`
     justify-content: flex-end;
     align-items: center;
     align-content: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    @media screen and (max-width: 40rem) {
+      justify-content: space-between;
+      padding: 0 1rem;
+    }
 
     a {
       font-size: 0.875rem;
@@ -326,6 +379,42 @@ const FirstTier = styled.div`
       padding: 0.5rem;
       cursor: pointer;
       margin: 0 0 0 1rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      
+      span {
+        flex: 1;
+
+        &.desktop {
+          display: flex;
+        }
+
+        &.mobile {
+          display: none;
+        }
+      }
+
+      @media screen and (max-width: 40rem) {
+        width: 25%;
+        font-size: 0.625rem;
+        margin: 0;
+        
+        span {
+          max-width: 3rem;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+
+          &.desktop {
+            display: none;
+          }
+  
+          &.mobile {
+            display: block;
+          }
+        }
+      }
 
       &:hover {
         background: #FFF;
@@ -336,6 +425,11 @@ const FirstTier = styled.div`
         font-size: 1rem;
         margin-right: 0.5rem;
         font-size: 1.25rem;
+
+        @media screen and (max-width: 40rem) {
+          font-size: 1rem;
+          margin-right: 0.25rem;
+        }
       }
     }
   }
@@ -352,6 +446,13 @@ const SecondTier = styled.div`
   align-content: center;
   padding: 1rem 0;
   background: #FFF;
+  position: relative;
+  z-index: 10;
+  
+  @media screen and (max-width: 40rem) {
+    padding: 1rem;
+    border-bottom: 0.1rem solid #EEE;
+  }
 
   .logo {
     width: 7.5rem;
@@ -372,6 +473,10 @@ const SecondTier = styled.div`
     background: #FFF;
     transition: 0.25s ease all;
     overflow: hidden;
+
+    @media screen and (max-width: 40rem) {
+      display: none;
+    }    
 
     &:hover {
       border-color: #1977D2;
@@ -405,6 +510,24 @@ const SecondTier = styled.div`
     align-items: center;
     align-content: center;
 
+    .desktop {
+      display: flex;
+    }
+  
+    .mobile {
+      display: none;
+    }
+  
+    @media screen and (max-width: 40rem) {
+      .desktop {
+        display: none;
+      }
+    
+      .mobile {
+        display: flex;
+      }
+    }
+
     a {
       display: flex;
       margin: 0 0 0 1rem;
@@ -413,6 +536,10 @@ const SecondTier = styled.div`
       font-size: 0.875rem;
       line-height: 1rem;
       text-decoration: none;
+
+      @media screen and (max-width: 40rem) {
+        margin: 0;
+      }
 
       &.masuk,
       &.daftar {
@@ -479,6 +606,22 @@ const SecondTier = styled.div`
         }
       }
     }
+
+    button {
+      margin: 0 0 0 1rem;
+      padding: 0;
+
+      i {
+        font-size: 2rem;
+        color: inherit;
+        transition: 0.25s ease all;
+
+        &.close {
+          color: #ff4949;
+          transition: 0.25s ease all;
+        }
+      }
+    }
   }
 `;
 
@@ -517,6 +660,10 @@ const ThirdTier = styled.div`
         color: #1977D2;
       }
     }
+  }
+
+  @media screen and (max-width: 40rem) {
+    display: none;
   }
 `;
 
@@ -667,4 +814,157 @@ const TriangleAccent = styled.div`
   border-left: 1rem solid #FAFAFA;
   border-bottom: 1rem solid transparent;
   border-right: 1rem solid transparent;
+`;
+
+const MobileMenu = styled.div`
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFF;
+  transform: translate3d(0, ${props => props.show ? '0' : '-100%'}, 0);
+  transition: 0.25s ease all;
+  z-index: 1;
+  padding: 7rem 1rem 2rem;
+
+  @media screen and (min-width: 40rem) {
+    display: none;
+  }
+
+  .mobileMenuContent {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .userAccess {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: stretch;
+    align-content: stretch;
+
+    a {
+      width: calc(50% - 0.5rem);
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+      color: #333;
+      cursor: pointer;
+      font-size: 0.875rem;
+      line-height: 1rem;
+      text-decoration: none;
+
+      &.masuk,
+      &.daftar {
+        border: 0.1rem solid #1977D2;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+      }
+
+      &.masuk {
+        background: #FFF;
+        border-color: #EEE;
+        transition: 0.25s ease all;
+
+        &:hover {
+          color: #FFF;
+          background: #1977D2;
+          border-color: #1977D2;
+          transition: 0.25s ease all;
+        }
+      }
+
+      &.daftar {
+        color: #FFF;
+        background: #1977D2;
+        transition: 0.25s ease all;
+
+        &:hover {
+          opacity: 0.875;
+          transition: 0.25s ease all;
+        }
+      }
+    }
+  }
+
+  .categories {
+    width: 100%;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    margin: 2rem 0 0;
+
+    button {
+      width: 100%;
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: flex-start;
+      align-items: center;
+      align-content: center;
+      font-size: 1;
+      margin: 1rem 0 0;
+      padding: 0 0 0.5rem;
+      border-bottom: 0.1rem solid #EEE;
+
+      img {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-right: 0.5rem;
+      }
+
+      span {
+        flex: 1;
+        text-align: left;
+      }
+
+      i {
+        color: #1977D2;
+        font-size: 1.5rem;
+        margin-left: 0.5rem;
+        transition: 0.25s ease all;
+
+        &.active {
+          transform: rotate(180deg);
+          transition: 0.25s ease all;
+        }
+      }
+    }
+
+    .subcats {
+      width: 100%;
+      display: flex;
+      flex-flow: column wrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      align-content: flex-start;
+      padding: 1rem 0 1rem 1rem;
+
+      a {
+        font-size: 1rem;
+        color: #1977D2;
+        text-decoration: none;
+        margin: 0 0 0.75rem;
+
+        &:last-of-type {
+          margin: 0;
+        }
+      }
+    }
+  }
 `;

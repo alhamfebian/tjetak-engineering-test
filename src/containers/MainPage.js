@@ -257,6 +257,10 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
   align-content: center;
+
+  @media screen and (max-width: 40rem) {
+    padding: 1rem;
+  }
 `;
 
 const StepToggler = styled.button`
@@ -339,6 +343,10 @@ const ProductCard = styled.button`
   background: none;
   cursor: pointer;
 
+  @media screen and (max-width: 40rem) {
+    width: 100%;
+  }
+
   &:hover {
     div {
       div {
@@ -354,6 +362,10 @@ const ProductCard = styled.button`
     max-height: 15rem;
     object-fit: cover;
     margin-right: 1rem;
+
+    @media screen and (max-width: 40rem) {
+      width: 100%;
+    }
   }
 
   div {
